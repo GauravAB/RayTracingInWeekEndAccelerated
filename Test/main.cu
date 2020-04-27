@@ -4,6 +4,7 @@
 #include <time.h>
 #include "device_launch_parameters.h"
 #include <fstream>
+#include "vector.h"
 
 #define checkCudaErrors(val) check_cuda((val),#val, __FILE__ , __LINE__ )
 
@@ -73,13 +74,11 @@ int main()
 		for (int i = 0; i < nx; i++)
 		{
 			size_t pixel_index = j * 3 * nx + i * 3;
-			float r = fb[pixel_index + 0];
-			float g = fb[pixel_index + 1];
-			float b = fb[pixel_index + 2];
-
-			int ir = int(255.99 * r);
-			int ig = int(255.99 * g);
-			int ib = int(255.99 * b);
+			vec3 col(fb[pixel_index + 0], fb[pixel_index + 1], fb[pixel_index + 2]);
+			
+			int ir = int(255.99 * col[0]);
+			int ig = int(255.99 * col[1]);
+			int ib = int(255.99 * col[2]);
 			
 			out << ir << " " << ig << " " << ib << std::endl;
 		}

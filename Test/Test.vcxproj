@@ -82,6 +82,9 @@
   <ItemGroup>
     <None Include="image.ppm" />
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="vector.h" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
     <Import Project="$(VCTargetsPath)\BuildCustomizations\CUDA 10.2.targets" />
