@@ -21,7 +21,7 @@ __device__ bool sphere::hit(const ray& r, float tmin, float tmax, hit_record& re
 	float a = dot(r.direction(), r.direction());
 	float b = dot(oc, r.direction());
 	float c = dot(oc, oc) - radius * radius;
-	float discriminant = sqrt(b * b - a * c);
+	float discriminant = b * b - a * c;
 
 	if (discriminant > 0)
 	{

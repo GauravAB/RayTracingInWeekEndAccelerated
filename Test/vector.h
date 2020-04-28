@@ -2,7 +2,6 @@
 #include <math.h>
 #include <stdlib.h>
 #include <iostream>
-#include "device_launch_parameters.h"
 
 //creating common class for cpu and gpu
 
@@ -25,6 +24,7 @@ public:
 	__host__ __device__ float b() { return e[2]; }
 	
 	__host__ __device__ float operator[] (int index) { return e[index]; }
+	
 	__host__ __device__ const vec3& operator+() { return *this; }
 	__host__ __device__ const vec3 operator-() { return vec3(-e[0], -e[1], -e[2]); }
 	
@@ -35,7 +35,7 @@ public:
 	__host__ __device__ inline vec3& operator*=(const float f);
 	__host__ __device__ inline vec3& operator/=(const float f);
 
-	__host__ __device__ inline float length() const { return sqrt(e[0] * e[0] + e[1] * e[1] + e[2] * e[2]); }
+	__host__ __device__ inline float length() const { return float(sqrt(e[0] * e[0] + e[1] * e[1] + e[2] * e[2])); }
 	__host__ __device__ inline float squared_length() const
 	{
 		return (e[0] * e[0] + e[1] * e[1] + e[2] * e[2]);
@@ -151,7 +151,7 @@ __host__ __device__ inline vec3 operator*(const vec3& v, float t)
 	return vec3(t * v.e[0], t * v.e[1], t * v.e[2]);
 }
 
-__host__ __device__ inline vec3 operator/(const vec3& v, float t)
+__host__ __device__ inline vec3 operator/(vec3 v, float t)
 {
 	return vec3(v.e[0]/t, v.e[1]/t,v.e[2]/t);
 }
