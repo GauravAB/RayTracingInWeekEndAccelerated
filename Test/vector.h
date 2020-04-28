@@ -23,10 +23,11 @@ public:
 	__host__ __device__ float g() { return e[1]; }
 	__host__ __device__ float b() { return e[2]; }
 	
-	__host__ __device__ float operator[] (int index) { return e[index]; }
-	
+	__host__ __device__ float operator[] (int index) const { return e[index]; }
+	__host__ __device__ float& operator[] (int index) { return e[index]; }
+
 	__host__ __device__ const vec3& operator+() { return *this; }
-	__host__ __device__ const vec3 operator-() { return vec3(-e[0], -e[1], -e[2]); }
+	__host__ __device__ const vec3 operator-()const { return vec3(-e[0], -e[1], -e[2]); }
 	
 	__host__ __device__ inline vec3& operator+=(const vec3& v);
 	__host__ __device__ inline vec3& operator-=(const vec3& v);
