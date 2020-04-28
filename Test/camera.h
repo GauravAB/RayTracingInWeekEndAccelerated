@@ -1,6 +1,21 @@
 #pragma once
+#include <curand_kernel.h>
 #include "ray.h"
+
 #define M_PI 3.14159265
+
+
+__device__ vec3 random_in_unit_disk(curandState* local_rand_state)
+{
+	vec3 p;
+
+	do
+	{
+		p = 2.0f * vec3(curand_uniform(local_rand_state), curand_uniform(local_rand_state), 0) - vec3(1, 1, 0);
+	} while (dot(p, p) >= 1.0f);
+
+	return p;
+}
 
 class camera
 {
@@ -9,26 +24,31 @@ public:
 	vec3 lower_left_corner;
 	vec3 horizontal;
 	vec3 vertical;
+	vec3 u, v, w;
+	float lens_radius;
 
-	__device__ camera(vec3 lookfrom, vec3 lookat, vec3 vup, float vfov, float aspect) 
+	__device__ camera(vec3 lookfrom, vec3 lookat, vec3 vup, float vfov, float aspect, float aperture, float focus_dist) 
 	{
-		vec3 u, v, w;
-		float theta = vfov * M_PI / 180;
-		float half_height = tan(theta / 2);
+		lens_radius = aperture / 2.0f;
+
+		float theta = vfov *((float) M_PI) / 180.0f;
+		float half_height = tan(theta / 2.0f);
 		float half_width = half_height * aspect;
 		origin = lookfrom;
 		//camera basis orthonormal axis
 		w = unit_vector(lookfrom - lookat);
 		u = unit_vector(cross(vup,w));
 		v = cross(w, u);
-		lower_left_corner = origin - half_width * u - half_height * v - w;
-		horizontal = 2 * half_width * u;
-		vertical = 2 * half_height * v;
+		lower_left_corner = origin - half_width * focus_dist * u - half_height * focus_dist* v - w*focus_dist;
+		horizontal = 2 * half_width * u * focus_dist;
+		vertical = 2 * half_height * v * focus_dist;
 	}
 	
-	__device__ ray get_ray(float s , float t)
+	__device__ ray get_ray(float s , float t, curandState* local_rand_state)
 	{
-		return ray(origin, lower_left_corner + s * horizontal + t * vertical - origin);
+		vec3 rd = lens_radius * random_in_unit_disk(local_rand_state);
+		vec3 offset = u * rd.x() + v * rd.y();
+		return ray(origin + offset, lower_left_corner + s * horizontal + t * vertical - origin - offset);
 	}
 };
 
